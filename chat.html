@@ -1,0 +1,780 @@
+><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦅 OPEN CLAW COMMAND CENTER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            background: #050505;
+            color: #e0e0e0;
+            font-family: 'Rajdhani', sans-serif;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: 
+                linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
+            border-right: 2px solid #dc2626;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            position: relative;
+        }
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #dc2626 0%, #0d9488 50%, #dc2626 100%);
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid #222;
+        }
+        
+        .logo-small {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .claw-icon-small {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.6));
+        }
+        
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .brand-text .main {
+            font-size: 18px;
+            font-weight: 900;
+            color: #dc2626;
+            letter-spacing: 2px;
+        }
+        
+        .brand-text .sub {
+            font-size: 10px;
+            color: #0d9488;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .agent-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .agent-category {
+            margin-bottom: 20px;
+        }
+        
+        .category-title {
+            font-size: 10px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+        
+        .agent-btn {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            border-left: 3px solid #333;
+            border-radius: 0 8px 8px 0;
+            color: #aaa;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .agent-btn:hover {
+            background: rgba(220, 38, 38, 0.1);
+            border-left-color: #dc2626;
+            color: #fff;
+            transform: translateX(5px);
+        }
+        
+        .agent-btn.active {
+            background: rgba(220, 38, 38, 0.15);
+            border-left-color: #dc2626;
+            color: #dc2626;
+        }
+        
+        .agent-emoji {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .status-panel {
+            padding: 20px;
+            background: rgba(13, 148, 136, 0.05);
+            border-top: 1px solid #222;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #0d9488;
+            margin-bottom: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #0d9488;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #0d9488;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .model-info {
+            font-size: 11px;
+            color: #555;
+        }
+        
+        /* Main Chat Area */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+            position: relative;
+        }
+        
+        .main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #dc2626 50%, transparent 100%);
+        }
+        
+        .header {
+            background: rgba(15, 15, 15, 0.95);
+            padding: 20px 30px;
+            border-bottom: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .current-agent {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #dc2626;
+            letter-spacing: 2px;
+        }
+        
+        .agent-label {
+            font-size: 10px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .session-info {
+            font-size: 12px;
+            color: #555;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid #dc2626;
+            color: #dc2626;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+        }
+        
+        /* Messages Area */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: 
+                radial-gradient(ellipse at top, rgba(220, 38, 38, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(13, 148, 136, 0.03) 0%, transparent 50%);
+        }
+        
+        .welcome-message {
+            text-align: center;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid #222;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .welcome-claw {
+            font-size: 60px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(220, 38, 38, 0.5);
+        }
+        
+        .welcome-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #dc2626;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .welcome-text {
+            color: #888;
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .message {
+            margin-bottom: 25px;
+            max-width: 85%;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            margin-left: auto;
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .message.user .message-header {
+            justify-content: flex-end;
+            color: #dc2626;
+        }
+        
+        .message.ai .message-header {
+            color: #0d9488;
+        }
+        
+        .message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .message.user .message-avatar {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid #dc2626;
+        }
+        
+        .message.ai .message-avatar {
+            background: rgba(13, 148, 136, 0.2);
+            border: 1px solid #0d9488;
+        }
+        
+        .message-bubble {
+            padding: 16px 20px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 15px;
+            position: relative;
+        }
+        
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #fff;
+            text-align: right;
+        }
+        
+        .message.ai .message-bubble {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #333;
+            color: #e0e0e0;
+        }
+        
+        .message.ai .message-bubble strong {
+            color: #dc2626;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 20px 30px;
+            color: #0d9488;
+            font-style: italic;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .typing-indicator.active {
+            display: flex;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #0d9488;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        /* Input Area */
+        .input-container {
+            padding: 20px 30px;
+            background: rgba(15, 15, 15, 0.98);
+            border-top: 1px solid #222;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-wrapper:focus-within {
+            border-color: #dc2626;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.1);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .chat-input::placeholder {
+            color: #555;
+        }
+        
+        .send-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.4);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quick-prompts {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-prompt {
+            padding: 8px 16px;
+            background: rgba(13, 148, 136, 0.1);
+            border: 1px solid rgba(13, 148, 136, 0.3);
+            border-radius: 20px;
+            color: #0d9488;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-prompt:hover {
+            background: rgba(13, 148, 136, 0.2);
+            color: #14b8a6;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
+        }
+        
+        /* Code blocks in AI responses */
+        .message-bubble pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .message-bubble code {
+            color: #0d9488;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-small">
+                <span class="claw-icon-small">🦅</span>
+                <div class="brand-text">
+                    <div class="main">OPEN CLAW</div>
+                    <div class="sub">Enterprise AI</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="agent-list">
+            <div class="agent-category">
+                <div class="category-title">Strategy</div>
+                <button class="agent-btn" onclick="setAgent('orchestrator')">
+                    <span class="agent-emoji">🎯</span> Orchestrator
+                </button>
+                <button class="agent-btn" onclick="setAgent('market_research')">
+                    <span class="agent-emoji">🔍</span> Market Research
+                </button>
+                <button class="agent-btn" onclick="setAgent('sales_marketing')">
+                    <span class="agent-emoji">💰</span> Sales & Marketing
+                </button>
+            </div>
+            
+            <div class="agent-category">
+                <div class="category-title">Product</div>
+                <button class="agent-btn" onclick="setAgent('product_design')">
+                    <span class="agent-emoji">🎨</span> Product Design
+                </button>
+                <button class="agent-btn" onclick="setAgent('frontend_engineer')">
+                    <span class="agent-emoji">🎭</span> Frontend Engineer
+                </button>
+                <button class="agent-btn" onclick="setAgent('backend_engineer')">
+                    <span class="agent-emoji">⚙️</span> Backend Engineer
+                </button>
+            </div>
+            
+            <div class="agent-category">
+                <div class="category-title">Operations</div>
+                <button class="agent-btn" onclick="setAgent('devops_security')">
+                    <span class="agent-emoji">🔒</span> DevOps & Security
+                </button>
+                <button class="agent-btn" onclick="setAgent('data_analyst')">
+                    <span class="agent-emoji">📊</span> Data Analyst
+                </button>
+                <button class="agent-btn" onclick="setAgent('communications')">
+                    <span class="agent-emoji">📧</span> Communications
+                </button>
+                <button class="agent-btn" onclick="setAgent('qa_documentation')">
+                    <span class="agent-emoji">🧪</span> QA & Documentation
+                </button>
+            </div>
+        </div>
+        
+        <div class="status-panel">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span>● SYSTEM ONLINE</span>
+            </div>
+            <div class="model-info">
+                GROQ AI // LLAMA 3.1 70B
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <div class="header-title">
+                <div>
+                    <div class="agent-label">Active Agent</div>
+                    <div class="current-agent" id="currentAgent">🎯 ORCHESTRATOR</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span class="session-info" id="sessionInfo">Session Active</span>
+                <button class="logout-btn" onclick="logout()">Terminate</button>
+            </div>
+        </div>
+        
+        <div class="messages-container" id="messages">
+            <div class="welcome-message">
+                <div class="welcome-claw">🦅</div>
+                <div class="welcome-title">WELCOME TO OPEN CLAW</div>
+                <div class="welcome-text">
+                    10 specialized AI agents ready for enterprise deployment. 
+                    Select an agent from the sidebar or type your command below.
+                    <br><br>
+                    <span style="color: #dc2626;">Current Model:</span> Llama 3.1 70B via Groq
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing">
+            <span>🦅</span>
+            <span>Agent is processing</span>
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" class="chat-input" id="input" placeholder="Enter command or select an agent..." autocomplete="off">
+                <button class="send-btn" id="sendBtn" onclick="send()">EXECUTE</button>
+            </div>
+            <div class="quick-prompts">
+                <span class="quick-prompt" onclick="quickPrompt('Design a SaaS landing page')">Design SaaS Landing</span>
+                <span class="quick-prompt" onclick="quickPrompt('Build a React component')">Build React Component</span>
+                <span class="quick-prompt" onclick="quickPrompt('Research market competitors')">Market Research</span>
+                <span class="quick-prompt" onclick="quickPrompt('Write email sequence')">Email Campaign</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001';
+        let currentAgent = 'orchestrator';
+        let session = null;
+        
+        // Check session
+        try {
+            session = JSON.parse(localStorage.getItem('userSession'));
+            if (!session) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('sessionInfo').textContent = 
+                    `Session: ${session.token.substr(0, 8)}...`;
+            }
+        } catch (e) {
+            window.location.href = 'login.html';
+        }
+
+        function setAgent(agentType) {
+            currentAgent = agentType;
+            const agentNames = {
+                orchestrator: '🎯 ORCHESTRATOR',
+                market_research: '🔍 MARKET RESEARCH',
+                product_design: '🎨 PRODUCT DESIGN',
+                backend_engineer: '⚙️ BACKEND ENGINEER',
+                frontend_engineer: '🎭 FRONTEND ENGINEER',
+                communications: '📧 COMMUNICATIONS',
+                sales_marketing: '💰 SALES & MARKETING',
+                devops_security: '🔒 DEVOPS & SECURITY',
+                data_analyst: '📊 DATA ANALYST',
+                qa_documentation: '🧪 QA & DOCUMENTATION'
+            };
+            
+            document.getElementById('currentAgent').textContent = agentNames[agentType] || agentType;
+            
+            // Update active button
+            document.querySelectorAll('.agent-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.agent-btn').classList.add('active');
+            
+            // Add system message
+            addMessage(`Agent switched to ${agentType.replace('_', ' ').toUpperCase()}`, 'system');
+        }
+
+        function addMessage(text, type) {
+            const container = document.getElementById('messages');
+            const div = document.createElement('div');
+            
+            if (type === 'system') {
+                div.innerHTML = `<div style="text-align: center; color: #0d9488; font-size: 12px; margin: 20px 0; letter-spacing: 2px;">— ${text} —</div>`;
+            } else {
+                div.className = `message ${type}`;
+                const avatar = type === 'user' ? '👤' : '🦅';
+                const name = type === 'user' ? 'YOU' : 'AGENT';
+                
+                div.innerHTML = `
+                    <div class="message-header">
+                        ${type === 'ai' ? `<span class="message-avatar">${avatar}</span><span>${name}</span>` : `<span>${name}</span><span class="message-avatar">${avatar}</span>`}
+                    </div>
+                    <div class="message-bubble">${formatMessage(text)}</div>
+                `;
+            }
+            
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatMessage(text) {
+            // Convert markdown-style code blocks
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function quickPrompt(text) {
+            document.getElementById('input').value = text;
+            document.getElementById('input').focus();
+        }
+
+        async function send() {
+            const input = document.getElementById('input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+            
+            const typing = document.getElementById('typing');
+            const sendBtn = document.getElementById('sendBtn');
+            typing.classList.add('active');
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: text, 
+                        sessionToken: session.token,
+                        context: `Current agent: ${currentAgent}`
+                    })
+                });
+
+                const data = await res.json();
+                typing.classList.remove('active');
+                sendBtn.disabled = false;
+
+                if (data.error) {
+                    addMessage(`⚠️ ERROR: ${data.error}`, 'ai');
+                } else {
+                    addMessage(data.result, 'ai');
+                }
+            } catch (err) {
+                typing.classList.remove('active');
+                sendBtn.disabled = false;
+                addMessage(`⚠️ CONNECTION FAILED: ${err.message}. Ensure backend is running on port 3001.`, 'ai');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') send();
+        });
+
+        // Focus input on load
+        document.getElementById('input').focus();
+    </script>
+</body>
+</html>
