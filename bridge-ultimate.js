@@ -225,7 +225,9 @@ app.get('/', (req, res) => {
 app.get('/chat', (req, res) => {
   res.sendFile(path.join(__dirname, 'chat.html'));
 });
-
+app.get('/landing', (req, res) => {
+  res.sendFile(path.join(__dirname, 'landing.html'));
+})
 // ==========================================
 // START SERVER
 // ==========================================
