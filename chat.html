@@ -1,780 +1,1117 @@
-><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🦅 OPEN CLAW COMMAND CENTER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
-        
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --red: #dc2626;
+            --teal: #0d9488;
+            --black: #050505;
+            --dark: #0a0a0a;
+            --panel: #0f0f0f;
+            --border: #222;
+            --text: #e0e0e0;
+            --muted: #555;
         }
-        
+
         body {
-            background: #050505;
-            color: #e0e0e0;
+            background: var(--black);
+            color: var(--text);
             font-family: 'Rajdhani', sans-serif;
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
-        
-        /* Sidebar */
+
+        /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 280px;
-            background: 
-                linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
-            border-right: 2px solid #dc2626;
+            width: 260px;
+            background: var(--panel);
+            border-right: 2px solid var(--red);
             display: flex;
             flex-direction: column;
-            padding: 0;
             position: relative;
+            flex-shrink: 0;
         }
-        
+
         .sidebar::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #dc2626 0%, #0d9488 50%, #dc2626 100%);
+            background: linear-gradient(90deg, var(--red), var(--teal), var(--red));
         }
-        
+
         .sidebar-header {
-            padding: 25px;
-            border-bottom: 1px solid #222;
-        }
-        
-        .logo-small {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .claw-icon-small {
-            font-size: 32px;
-            filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.6));
-        }
-        
-        .brand-text {
-            font-family: 'Orbitron', sans-serif;
-        }
-        
-        .brand-text .main {
-            font-size: 18px;
-            font-weight: 900;
-            color: #dc2626;
-            letter-spacing: 2px;
-        }
-        
-        .brand-text .sub {
-            font-size: 10px;
-            color: #0d9488;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        
-        .agent-list {
-            flex: 1;
-            overflow-y: auto;
             padding: 20px;
+            border-bottom: 1px solid var(--border);
         }
-        
-        .agent-category {
-            margin-bottom: 20px;
+
+        .logo-small { display: flex; align-items: center; gap: 12px; }
+        .claw-icon-small { font-size: 30px; filter: drop-shadow(0 0 10px rgba(220,38,38,0.6)); }
+        .brand-text .main { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: var(--red); letter-spacing: 2px; }
+        .brand-text .sub { font-size: 9px; color: var(--teal); letter-spacing: 3px; }
+
+        /* Business Profile Box */
+        .profile-box {
+            margin: 12px;
+            padding: 12px;
+            background: rgba(13,148,136,0.05);
+            border: 1px solid rgba(13,148,136,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        
-        .category-title {
-            font-size: 10px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            padding-left: 10px;
-        }
-        
+        .profile-box:hover { border-color: var(--teal); background: rgba(13,148,136,0.1); }
+        .profile-box-label { font-size: 9px; color: var(--teal); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+        .profile-box-name { font-size: 13px; color: #ccc; font-weight: 500; }
+
+        .agent-list { flex: 1; overflow-y: auto; padding: 12px; }
+
+        .agent-category { margin-bottom: 16px; }
+        .category-title { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; padding-left: 8px; }
+
         .agent-btn {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 5px 0;
-            background: rgba(255, 255, 255, 0.03);
+            width: 100%; padding: 10px 12px; margin: 3px 0;
+            background: rgba(255,255,255,0.02);
             border: 1px solid transparent;
             border-left: 3px solid #333;
             border-radius: 0 8px 8px 0;
             color: #aaa;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 13px; font-weight: 500;
+            cursor: pointer; transition: all 0.3s;
+            text-align: left; display: flex; align-items: center; gap: 8px;
         }
-        
-        .agent-btn:hover {
-            background: rgba(220, 38, 38, 0.1);
-            border-left-color: #dc2626;
-            color: #fff;
-            transform: translateX(5px);
+        .agent-btn:hover { background: rgba(220,38,38,0.1); border-left-color: var(--red); color: #fff; transform: translateX(4px); }
+        .agent-btn.active { background: rgba(220,38,38,0.15); border-left-color: var(--red); color: var(--red); }
+
+        /* Saved outputs in sidebar */
+        .saved-section { padding: 12px; border-top: 1px solid var(--border); }
+        .saved-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .saved-item {
+            padding: 8px 10px; margin: 3px 0;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 11px; color: #888;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 6px;
         }
-        
-        .agent-btn.active {
-            background: rgba(220, 38, 38, 0.15);
-            border-left-color: #dc2626;
-            color: #dc2626;
-        }
-        
-        .agent-emoji {
-            font-size: 16px;
-            width: 24px;
-            text-align: center;
-        }
-        
+        .saved-item:hover { border-color: var(--teal); color: var(--teal); }
+
         .status-panel {
-            padding: 20px;
-            background: rgba(13, 148, 136, 0.05);
-            border-top: 1px solid #222;
+            padding: 14px;
+            background: rgba(13,148,136,0.05);
+            border-top: 1px solid var(--border);
         }
-        
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            color: #0d9488;
-            margin-bottom: 8px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #0d9488;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #0d9488;
-            animation: pulse-dot 2s infinite;
-        }
-        
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .model-info {
-            font-size: 11px;
-            color: #555;
-        }
-        
-        /* Main Chat Area */
+        .status-indicator { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--teal); margin-bottom: 4px; }
+        .status-dot { width: 7px; height: 7px; background: var(--teal); border-radius: 50%; box-shadow: 0 0 8px var(--teal); animation: pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        .model-info { font-size: 10px; color: var(--muted); }
+
+        /* ===== MAIN AREA ===== */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #0a0a0a;
-            position: relative;
+            background: var(--dark);
+            overflow: hidden;
         }
-        
-        .main::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent 0%, #dc2626 50%, transparent 100%);
-        }
-        
+
+        /* Header */
         .header {
-            background: rgba(15, 15, 15, 0.95);
-            padding: 20px 30px;
-            border-bottom: 1px solid #222;
+            background: rgba(15,15,15,0.98);
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
+            flex-shrink: 0;
         }
-        
-        .header-title {
-            display: flex;
+
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .agent-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
+        .current-agent { font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--red); letter-spacing: 2px; }
+
+        /* Agent status bar */
+        .agent-status-bar {
+            display: none;
             align-items: center;
-            gap: 15px;
-        }
-        
-        .current-agent {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            color: #dc2626;
-            letter-spacing: 2px;
-        }
-        
-        .agent-label {
-            font-size: 10px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .session-info {
+            gap: 10px;
+            padding: 6px 14px;
+            background: rgba(13,148,136,0.1);
+            border: 1px solid rgba(13,148,136,0.3);
+            border-radius: 20px;
             font-size: 12px;
-            color: #555;
+            color: var(--teal);
         }
-        
-        .logout-btn {
-            padding: 10px 20px;
+        .agent-status-bar.active { display: flex; }
+        .status-pulse { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; animation: pulse-dot 0.8s infinite; }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .session-info { font-size: 11px; color: var(--muted); }
+
+        .icon-btn {
+            padding: 8px 14px;
             background: transparent;
-            border: 1px solid #dc2626;
-            color: #dc2626;
+            border: 1px solid var(--border);
+            color: #888;
+            border-radius: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px; cursor: pointer; transition: all 0.3s;
+        }
+        .icon-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
             border-radius: 6px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            font-size: 10px; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s; text-transform: uppercase;
         }
-        
-        .logout-btn:hover {
-            background: #dc2626;
-            color: #fff;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+        .logout-btn:hover { background: var(--red); color: #fff; box-shadow: 0 0 20px rgba(220,38,38,0.3); }
+
+        /* ===== SPLIT VIEW ===== */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
         }
-        
-        /* Messages Area */
+
+        /* Chat panel */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            min-width: 0;
+        }
+
         .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 30px;
-            background: 
-                radial-gradient(ellipse at top, rgba(220, 38, 38, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at bottom, rgba(13, 148, 136, 0.03) 0%, transparent 50%);
+            padding: 24px;
+            background:
+                radial-gradient(ellipse at top, rgba(220,38,38,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(13,148,136,0.03) 0%, transparent 50%);
         }
-        
+
         .welcome-message {
             text-align: center;
-            padding: 40px;
-            margin-bottom: 30px;
-            border: 1px solid #222;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        .welcome-claw {
-            font-size: 60px;
+            padding: 30px;
             margin-bottom: 20px;
-            text-shadow: 0 0 40px rgba(220, 38, 38, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.02);
         }
-        
-        .welcome-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            color: #dc2626;
-            margin-bottom: 10px;
-            letter-spacing: 3px;
-        }
-        
-        .welcome-text {
-            color: #888;
-            font-size: 16px;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .message {
-            margin-bottom: 25px;
-            max-width: 85%;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .message.user {
-            margin-left: auto;
-        }
-        
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        
-        .message.user .message-header {
-            justify-content: flex-end;
-            color: #dc2626;
-        }
-        
-        .message.ai .message-header {
-            color: #0d9488;
-        }
-        
+        .welcome-claw { font-size: 50px; margin-bottom: 15px; text-shadow: 0 0 40px rgba(220,38,38,0.5); }
+        .welcome-title { font-family: 'Orbitron', sans-serif; font-size: 20px; color: var(--red); margin-bottom: 8px; letter-spacing: 3px; }
+        .welcome-text { color: #888; font-size: 14px; line-height: 1.6; max-width: 500px; margin: 0 auto; }
+
+        .message { margin-bottom: 20px; max-width: 88%; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+        .message.user { margin-left: auto; }
+        .message-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 11px; }
+        .message.user .message-header { justify-content: flex-end; color: var(--red); }
+        .message.ai .message-header { color: var(--teal); }
+
         .message-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 13px;
         }
-        
-        .message.user .message-avatar {
-            background: rgba(220, 38, 38, 0.2);
-            border: 1px solid #dc2626;
-        }
-        
-        .message.ai .message-avatar {
-            background: rgba(13, 148, 136, 0.2);
-            border: 1px solid #0d9488;
-        }
-        
+        .message.user .message-avatar { background: rgba(220,38,38,0.2); border: 1px solid var(--red); }
+        .message.ai .message-avatar { background: rgba(13,148,136,0.2); border: 1px solid var(--teal); }
+
         .message-bubble {
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-radius: 12px;
             line-height: 1.6;
-            font-size: 15px;
+            font-size: 14px;
             position: relative;
         }
-        
         .message.user .message-bubble {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%);
-            border: 1px solid rgba(220, 38, 38, 0.3);
+            background: linear-gradient(135deg, rgba(220,38,38,0.15), rgba(220,38,38,0.05));
+            border: 1px solid rgba(220,38,38,0.3);
             color: #fff;
-            text-align: right;
         }
-        
         .message.ai .message-bubble {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid #333;
-            color: #e0e0e0;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #2a2a2a;
+            color: var(--text);
         }
-        
-        .message.ai .message-bubble strong {
-            color: #dc2626;
+        .message.ai .message-bubble strong { color: var(--red); }
+
+        /* Message action buttons */
+        .message-actions {
+            display: flex; gap: 8px; margin-top: 8px;
         }
-        
-        .typing-indicator {
+        .msg-action-btn {
+            padding: 4px 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--muted);
+            font-size: 11px; cursor: pointer; transition: all 0.2s;
+        }
+        .msg-action-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+        /* Streaming text cursor */
+        .streaming-cursor {
+            display: inline-block;
+            width: 2px; height: 14px;
+            background: var(--teal);
+            animation: blink 0.7s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+        /* Progress stages */
+        .progress-stages {
             display: none;
-            padding: 20px 30px;
-            color: #0d9488;
-            font-style: italic;
+            gap: 8px;
+            padding: 14px 24px;
+            border-top: 1px solid var(--border);
             align-items: center;
-            gap: 10px;
+            flex-shrink: 0;
         }
-        
-        .typing-indicator.active {
-            display: flex;
+        .progress-stages.active { display: flex; }
+        .stage {
+            display: flex; align-items: center; gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px; color: var(--muted);
+            border: 1px solid var(--border);
+            transition: all 0.4s;
         }
-        
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .typing-dots span {
-            width: 6px;
-            height: 6px;
-            background: #0d9488;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-        
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
-        
+        .stage.active { border-color: var(--teal); color: var(--teal); background: rgba(13,148,136,0.1); }
+        .stage.done { border-color: #333; color: #444; }
+        .stage-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
         /* Input Area */
         .input-container {
-            padding: 20px 30px;
-            background: rgba(15, 15, 15, 0.98);
-            border-top: 1px solid #222;
+            padding: 16px 24px;
+            background: rgba(15,15,15,0.98);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
         }
-        
         .input-wrapper {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.5);
+            display: flex; gap: 12px; align-items: center;
+            background: rgba(0,0,0,0.5);
             border: 1px solid #333;
-            border-radius: 12px;
-            padding: 5px;
-            transition: all 0.3s ease;
+            border-radius: 10px;
+            padding: 4px;
+            transition: all 0.3s;
         }
-        
-        .input-wrapper:focus-within {
-            border-color: #dc2626;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.1);
-        }
-        
+        .input-wrapper:focus-within { border-color: var(--red); box-shadow: 0 0 15px rgba(220,38,38,0.1); }
         .chat-input {
-            flex: 1;
-            padding: 15px 20px;
-            background: transparent;
-            border: none;
+            flex: 1; padding: 12px 16px;
+            background: transparent; border: none;
             color: #fff;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 16px;
+            font-family: 'Rajdhani', sans-serif; font-size: 15px;
             outline: none;
         }
-        
-        .chat-input::placeholder {
-            color: #555;
-        }
-        
+        .chat-input::placeholder { color: var(--muted); }
         .send-btn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--red), #991b1b);
+            color: #fff; border: none; border-radius: 7px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            font-size: 11px; font-weight: 700; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s; text-transform: uppercase;
         }
-        
-        .send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(220, 38, 38, 0.4);
-        }
-        
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .quick-prompts {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
+        .send-btn:hover { transform: scale(1.04); box-shadow: 0 0 25px rgba(220,38,38,0.4); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .quick-prompts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .quick-prompt {
-            padding: 8px 16px;
-            background: rgba(13, 148, 136, 0.1);
-            border: 1px solid rgba(13, 148, 136, 0.3);
+            padding: 6px 14px;
+            background: rgba(13,148,136,0.08);
+            border: 1px solid rgba(13,148,136,0.25);
             border-radius: 20px;
-            color: #0d9488;
+            color: var(--teal); font-size: 11px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .quick-prompt:hover { background: rgba(13,148,136,0.18); }
+
+        /* ===== PREVIEW PANEL ===== */
+        .preview-panel {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            background: #080808;
+            border-left: 1px solid var(--border);
+            flex-shrink: 0;
+            transition: width 0.3s;
+        }
+        .preview-panel.hidden { width: 0; overflow: hidden; }
+
+        .preview-header {
+            padding: 10px 16px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
+        }
+        .preview-tabs { display: flex; gap: 4px; }
+        .preview-tab {
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--muted); font-size: 11px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .preview-tab.active { border-color: var(--red); color: var(--red); background: rgba(220,38,38,0.08); }
+        .preview-tab:hover:not(.active) { border-color: #444; color: #ccc; }
+
+        .preview-actions { display: flex; gap: 6px; }
+
+        .preview-content { flex: 1; overflow: hidden; position: relative; }
+
+        /* Code view */
+        .code-view {
+            width: 100%; height: 100%;
+            background: #020202;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
             font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 16px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.6;
         }
-        
-        .quick-prompt:hover {
-            background: rgba(13, 148, 136, 0.2);
-            color: #14b8a6;
+        .code-view .kw { color: #cc99cd; }
+        .code-view .str { color: #7ec699; }
+        .code-view .fn { color: #6fb3d2; }
+        .code-view .cm { color: #555; font-style: italic; }
+
+        /* Visual preview iframe */
+        .visual-view {
+            width: 100%; height: 100%;
+            border: none;
+            background: white;
+            display: none;
         }
-        
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .visual-view.active { display: block; }
+
+        /* Empty preview state */
+        .preview-empty {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--muted); text-align: center; gap: 12px;
         }
-        
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
+        .preview-empty-icon { font-size: 48px; opacity: 0.3; }
+        .preview-empty-text { font-size: 13px; line-height: 1.6; opacity: 0.6; }
+
+        /* Build timeline */
+        .build-timeline {
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            max-height: 120px;
+            overflow-y: auto;
+            flex-shrink: 0;
         }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
+        .timeline-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+        .timeline-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11px; color: #666;
+            padding: 3px 0;
+            border-left: 2px solid #222;
+            padding-left: 8px;
+            animation: slideIn 0.3s ease;
         }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #dc2626;
+        .timeline-item.success { color: var(--teal); border-left-color: var(--teal); }
+        .timeline-item.error { color: var(--red); border-left-color: var(--red); }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center; justify-content: center;
         }
-        
-        /* Code blocks in AI responses */
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--red);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 520px;
+            animation: slideIn 0.3s ease;
+        }
+        .modal-title { font-family: 'Orbitron', sans-serif; font-size: 16px; color: var(--red); letter-spacing: 2px; margin-bottom: 20px; }
+        .modal-field { margin-bottom: 16px; }
+        .modal-label { font-size: 11px; color: var(--teal); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+        .modal-input {
+            width: 100%; padding: 12px 14px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333; border-radius: 6px;
+            color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 14px;
+            outline: none; transition: border-color 0.3s;
+        }
+        .modal-input:focus { border-color: var(--teal); }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .modal-btn {
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s; text-transform: uppercase;
+        }
+        .modal-btn.primary { background: var(--red); color: #fff; border: 1px solid var(--red); }
+        .modal-btn.primary:hover { background: #b91c1c; box-shadow: 0 0 20px rgba(220,38,38,0.3); }
+        .modal-btn.secondary { background: transparent; color: #888; border: 1px solid #333; }
+        .modal-btn.secondary:hover { border-color: #555; color: #ccc; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        /* Code blocks in messages */
         .message-bubble pre {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 12px;
         }
-        
-        .message-bubble code {
-            color: #0d9488;
-        }
+        .message-bubble code { color: var(--teal); }
+        .message-bubble h1, .message-bubble h2, .message-bubble h3 { color: var(--red); margin: 10px 0 6px; font-family: 'Orbitron', sans-serif; font-size: 14px; }
+        .message-bubble ul, .message-bubble ol { padding-left: 20px; margin: 6px 0; }
+        .message-bubble li { margin: 3px 0; }
+        .message-bubble hr { border-color: #222; margin: 10px 0; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-small">
-                <span class="claw-icon-small">🦅</span>
-                <div class="brand-text">
-                    <div class="main">OPEN CLAW</div>
-                    <div class="sub">Enterprise AI</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="agent-list">
-            <div class="agent-category">
-                <div class="category-title">Strategy</div>
-                <button class="agent-btn" onclick="setAgent('orchestrator')">
-                    <span class="agent-emoji">🎯</span> Orchestrator
-                </button>
-                <button class="agent-btn" onclick="setAgent('market_research')">
-                    <span class="agent-emoji">🔍</span> Market Research
-                </button>
-                <button class="agent-btn" onclick="setAgent('sales_marketing')">
-                    <span class="agent-emoji">💰</span> Sales & Marketing
-                </button>
-            </div>
-            
-            <div class="agent-category">
-                <div class="category-title">Product</div>
-                <button class="agent-btn" onclick="setAgent('product_design')">
-                    <span class="agent-emoji">🎨</span> Product Design
-                </button>
-                <button class="agent-btn" onclick="setAgent('frontend_engineer')">
-                    <span class="agent-emoji">🎭</span> Frontend Engineer
-                </button>
-                <button class="agent-btn" onclick="setAgent('backend_engineer')">
-                    <span class="agent-emoji">⚙️</span> Backend Engineer
-                </button>
-            </div>
-            
-            <div class="agent-category">
-                <div class="category-title">Operations</div>
-                <button class="agent-btn" onclick="setAgent('devops_security')">
-                    <span class="agent-emoji">🔒</span> DevOps & Security
-                </button>
-                <button class="agent-btn" onclick="setAgent('data_analyst')">
-                    <span class="agent-emoji">📊</span> Data Analyst
-                </button>
-                <button class="agent-btn" onclick="setAgent('communications')">
-                    <span class="agent-emoji">📧</span> Communications
-                </button>
-                <button class="agent-btn" onclick="setAgent('qa_documentation')">
-                    <span class="agent-emoji">🧪</span> QA & Documentation
-                </button>
-            </div>
-        </div>
-        
-        <div class="status-panel">
-            <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span>● SYSTEM ONLINE</span>
-            </div>
-            <div class="model-info">
-                GROQ AI // LLAMA 3.1 70B
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-small">
+            <span class="claw-icon-small">🦅</span>
+            <div class="brand-text">
+                <div class="main">OPEN CLAW</div>
+                <div class="sub">Enterprise AI</div>
             </div>
         </div>
     </div>
 
-    <div class="main">
-        <div class="header">
-            <div class="header-title">
-                <div>
-                    <div class="agent-label">Active Agent</div>
-                    <div class="current-agent" id="currentAgent">🎯 ORCHESTRATOR</div>
-                </div>
-            </div>
-            <div class="header-actions">
-                <span class="session-info" id="sessionInfo">Session Active</span>
-                <button class="logout-btn" onclick="logout()">Terminate</button>
-            </div>
-        </div>
-        
-        <div class="messages-container" id="messages">
-            <div class="welcome-message">
-                <div class="welcome-claw">🦅</div>
-                <div class="welcome-title">WELCOME TO OPEN CLAW</div>
-                <div class="welcome-text">
-                    10 specialized AI agents ready for enterprise deployment. 
-                    Select an agent from the sidebar or type your command below.
-                    <br><br>
-                    <span style="color: #dc2626;">Current Model:</span> Llama 3.1 70B via Groq
-                </div>
-            </div>
-        </div>
+    <!-- Business Profile -->
+    <div class="profile-box" onclick="openProfileModal()">
+        <div class="profile-box-label">🏢 Your Business</div>
+        <div class="profile-box-name" id="profileName">Set your business profile →</div>
+    </div>
 
-        <div class="typing-indicator" id="typing">
-            <span>🦅</span>
-            <span>Agent is processing</span>
-            <div class="typing-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+    <div class="agent-list">
+        <div class="agent-category">
+            <div class="category-title">Strategy</div>
+            <button class="agent-btn active" onclick="setAgent('orchestrator', this)"><span>🎯</span> Orchestrator</button>
+            <button class="agent-btn" onclick="setAgent('market_research', this)"><span>🔍</span> Market Research</button>
+            <button class="agent-btn" onclick="setAgent('sales_marketing', this)"><span>💰</span> Sales & Marketing</button>
         </div>
-
-        <div class="input-container">
-            <div class="input-wrapper">
-                <input type="text" class="chat-input" id="input" placeholder="Enter command or select an agent..." autocomplete="off">
-                <button class="send-btn" id="sendBtn" onclick="send()">EXECUTE</button>
-            </div>
-            <div class="quick-prompts">
-                <span class="quick-prompt" onclick="quickPrompt('Design a SaaS landing page')">Design SaaS Landing</span>
-                <span class="quick-prompt" onclick="quickPrompt('Build a React component')">Build React Component</span>
-                <span class="quick-prompt" onclick="quickPrompt('Research market competitors')">Market Research</span>
-                <span class="quick-prompt" onclick="quickPrompt('Write email sequence')">Email Campaign</span>
-            </div>
+        <div class="agent-category">
+            <div class="category-title">Product</div>
+            <button class="agent-btn" onclick="setAgent('product_design', this)"><span>🎨</span> Product Design</button>
+            <button class="agent-btn" onclick="setAgent('frontend_engineer', this)"><span>🎭</span> Frontend Engineer</button>
+            <button class="agent-btn" onclick="setAgent('backend_engineer', this)"><span>⚙️</span> Backend Engineer</button>
+        </div>
+        <div class="agent-category">
+            <div class="category-title">Operations</div>
+            <button class="agent-btn" onclick="setAgent('devops_security', this)"><span>🔒</span> DevOps & Security</button>
+            <button class="agent-btn" onclick="setAgent('data_analyst', this)"><span>📊</span> Data Analyst</button>
+            <button class="agent-btn" onclick="setAgent('communications', this)"><span>📧</span> Communications</button>
+            <button class="agent-btn" onclick="setAgent('qa_documentation', this)"><span>🧪</span> QA & Docs</button>
         </div>
     </div>
 
-    <script>
-        const API_URL = 'https://openclaw-enterprise-production-57a3.up.railway.app';
-        let currentAgent = 'orchestrator';
-        let session = null;
-        
-        // Check session
-        try {
-            session = JSON.parse(localStorage.getItem('userSession'));
-            if (!session) {
-                window.location.href = 'login.html';
-            } else {
-                document.getElementById('sessionInfo').textContent = 
-                    `Session: ${session.token.substr(0, 8)}...`;
-            }
-        } catch (e) {
-            window.location.href = 'login.html';
-        }
+    <!-- Saved Outputs -->
+    <div class="saved-section">
+        <div class="saved-label">💾 Saved Outputs</div>
+        <div id="savedList">
+            <div style="font-size:11px; color:#444; padding: 4px 0;">No saved outputs yet</div>
+        </div>
+    </div>
 
-        function setAgent(agentType) {
-            currentAgent = agentType;
-            const agentNames = {
-                orchestrator: '🎯 ORCHESTRATOR',
-                market_research: '🔍 MARKET RESEARCH',
-                product_design: '🎨 PRODUCT DESIGN',
-                backend_engineer: '⚙️ BACKEND ENGINEER',
-                frontend_engineer: '🎭 FRONTEND ENGINEER',
-                communications: '📧 COMMUNICATIONS',
-                sales_marketing: '💰 SALES & MARKETING',
-                devops_security: '🔒 DEVOPS & SECURITY',
-                data_analyst: '📊 DATA ANALYST',
-                qa_documentation: '🧪 QA & DOCUMENTATION'
-            };
-            
-            document.getElementById('currentAgent').textContent = agentNames[agentType] || agentType;
-            
-            // Update active button
-            document.querySelectorAll('.agent-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.closest('.agent-btn').classList.add('active');
-            
-            // Add system message
-            addMessage(`Agent switched to ${agentType.replace('_', ' ').toUpperCase()}`, 'system');
-        }
+    <div class="status-panel">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>SYSTEM ONLINE</span>
+        </div>
+        <div class="model-info">GROQ // LLAMA-3.3-70B</div>
+    </div>
+</div>
 
-        function addMessage(text, type) {
-            const container = document.getElementById('messages');
-            const div = document.createElement('div');
-            
-            if (type === 'system') {
-                div.innerHTML = `<div style="text-align: center; color: #0d9488; font-size: 12px; margin: 20px 0; letter-spacing: 2px;">— ${text} —</div>`;
-            } else {
-                div.className = `message ${type}`;
-                const avatar = type === 'user' ? '👤' : '🦅';
-                const name = type === 'user' ? 'YOU' : 'AGENT';
-                
-                div.innerHTML = `
-                    <div class="message-header">
-                        ${type === 'ai' ? `<span class="message-avatar">${avatar}</span><span>${name}</span>` : `<span>${name}</span><span class="message-avatar">${avatar}</span>`}
+<!-- ===== MAIN ===== -->
+<div class="main">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div>
+                <div class="agent-label">Active Agent</div>
+                <div class="current-agent" id="currentAgentDisplay">🎯 ORCHESTRATOR</div>
+            </div>
+            <div class="agent-status-bar" id="agentStatusBar">
+                <div class="status-pulse"></div>
+                <span id="agentStatusText">Agent is thinking...</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="session-info" id="sessionInfo">–</span>
+            <button class="icon-btn" onclick="togglePreview()">⚡ Preview</button>
+            <button class="icon-btn" onclick="clearChat()">🗑 Clear</button>
+            <button class="logout-btn" onclick="logout()">Exit</button>
+        </div>
+    </div>
+
+    <!-- Workspace -->
+    <div class="workspace">
+
+        <!-- Chat Panel -->
+        <div class="chat-panel">
+            <div class="messages-container" id="messages">
+                <div class="welcome-message">
+                    <div class="welcome-claw">🦅</div>
+                    <div class="welcome-title">OPEN CLAW v4.0</div>
+                    <div class="welcome-text">
+                        Your AI enterprise team is ready.<br>
+                        Set your <strong style="color:var(--teal)">business profile</strong> for personalized results.<br>
+                        The <strong style="color:var(--red)">Frontend Engineer</strong> will render live previews automatically.
                     </div>
-                    <div class="message-bubble">${formatMessage(text)}</div>
-                `;
+                </div>
+            </div>
+
+            <!-- Progress Stages -->
+            <div class="progress-stages" id="progressStages">
+                <div class="stage" id="stage1"><div class="stage-dot"></div> Analyzing</div>
+                <div class="stage" id="stage2"><div class="stage-dot"></div> Researching</div>
+                <div class="stage" id="stage3"><div class="stage-dot"></div> Building</div>
+                <div class="stage" id="stage4"><div class="stage-dot"></div> Complete</div>
+            </div>
+
+            <!-- Input -->
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input type="text" class="chat-input" id="input" placeholder="Type your command or question..." autocomplete="off">
+                    <button class="send-btn" id="sendBtn" onclick="send()">EXECUTE</button>
+                </div>
+                <div class="quick-prompts">
+                    <span class="quick-prompt" onclick="quickPrompt('Design a modern SaaS landing page for my business')">🎨 Design Landing Page</span>
+                    <span class="quick-prompt" onclick="quickPrompt('Research my top 5 competitors and their pricing')">🔍 Research Competitors</span>
+                    <span class="quick-prompt" onclick="quickPrompt('Write a 5-email welcome sequence for new customers')">📧 Email Sequence</span>
+                    <span class="quick-prompt" onclick="quickPrompt('Build a React dashboard component with charts')">⚡ Build Dashboard</span>
+                    <span class="quick-prompt" onclick="quickPrompt('Create a sales outreach script for cold calls')">💰 Sales Script</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel" id="previewPanel">
+            <div class="preview-header">
+                <div class="preview-tabs">
+                    <button class="preview-tab active" onclick="switchTab('visual')" id="tabVisual">👁 Visual</button>
+                    <button class="preview-tab" onclick="switchTab('code')" id="tabCode">💻 Code</button>
+                </div>
+                <div class="preview-actions">
+                    <button class="icon-btn" onclick="downloadPreview()">⬇ Export</button>
+                    <button class="icon-btn" onclick="copyPreview()">📋 Copy</button>
+                    <button class="icon-btn" onclick="saveOutput()">💾 Save</button>
+                </div>
+            </div>
+
+            <div class="preview-content">
+                <div class="preview-empty" id="previewEmpty">
+                    <div class="preview-empty-icon">⚡</div>
+                    <div class="preview-empty-text">
+                        Ask the <strong>Frontend Engineer</strong> to build something<br>and watch it render here live.
+                    </div>
+                </div>
+                <div class="code-view" id="codeView" style="display:none;"></div>
+                <iframe class="visual-view" id="visualView" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+
+            <div class="build-timeline" id="buildTimeline">
+                <div class="timeline-label">Build Log</div>
+                <div id="timelineItems">
+                    <div class="timeline-item">⏳ Awaiting build command...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== BUSINESS PROFILE MODAL ===== -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal">
+        <div class="modal-title">🏢 Business Profile</div>
+        <p style="color:#888; font-size:13px; margin-bottom:20px;">Set this once — all 10 agents will personalize their responses for your business.</p>
+        <div class="modal-field">
+            <label class="modal-label">Business Name</label>
+            <input class="modal-input" id="bizName" placeholder="e.g. Johnson Plumbing Co.">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Industry / Type</label>
+            <input class="modal-input" id="bizType" placeholder="e.g. Plumbing services, Restaurant, Retail store">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Location (City, State)</label>
+            <input class="modal-input" id="bizLocation" placeholder="e.g. Dallas, Texas">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Target Customers</label>
+            <input class="modal-input" id="bizCustomers" placeholder="e.g. Homeowners aged 30-60 in suburbs">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Main Goal Right Now</label>
+            <input class="modal-input" id="bizGoal" placeholder="e.g. Get more leads online, build a website, grow sales">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn secondary" onclick="closeProfileModal()">Cancel</button>
+            <button class="modal-btn primary" onclick="saveProfile()">Save Profile</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://openclaw-enterprise-production-57a3.up.railway.app';
+    let currentAgent = 'orchestrator';
+    let session = null;
+    let businessProfile = null;
+    let savedOutputs = [];
+    let lastAIResponse = '';
+    let previewVisible = true;
+    let currentTab = 'visual';
+
+    // ===== SESSION =====
+    try {
+        session = JSON.parse(localStorage.getItem('userSession'));
+        if (!session) window.location.href = '/';
+        else document.getElementById('sessionInfo').textContent = session.email || 'Active';
+    } catch(e) { window.location.href = '/'; }
+
+    // Load saved profile
+    const saved = localStorage.getItem('businessProfile');
+    if (saved) {
+        businessProfile = JSON.parse(saved);
+        document.getElementById('profileName').textContent = businessProfile.bizName || 'Profile set ✓';
+    }
+
+    // Load saved outputs
+    const savedData = localStorage.getItem('savedOutputs');
+    if (savedData) {
+        savedOutputs = JSON.parse(savedData);
+        renderSavedList();
+    }
+
+    // ===== AGENT SWITCHER =====
+    const agentNames = {
+        orchestrator: '🎯 ORCHESTRATOR',
+        market_research: '🔍 MARKET RESEARCH',
+        product_design: '🎨 PRODUCT DESIGN',
+        backend_engineer: '⚙️ BACKEND ENGINEER',
+        frontend_engineer: '🎭 FRONTEND ENGINEER',
+        communications: '📧 COMMUNICATIONS',
+        sales_marketing: '💰 SALES & MARKETING',
+        devops_security: '🔒 DEVOPS & SECURITY',
+        data_analyst: '📊 DATA ANALYST',
+        qa_documentation: '🧪 QA & DOCS'
+    };
+
+    function setAgent(type, btn) {
+        currentAgent = type;
+        document.getElementById('currentAgentDisplay').textContent = agentNames[type];
+        document.querySelectorAll('.agent-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        addSystemMsg(`Switched to ${agentNames[type]}`);
+    }
+
+    // ===== MESSAGES =====
+    function addSystemMsg(text) {
+        const c = document.getElementById('messages');
+        const d = document.createElement('div');
+        d.style.cssText = 'text-align:center;color:#0d9488;font-size:11px;margin:12px 0;letter-spacing:2px;opacity:0.7;';
+        d.textContent = `— ${text} —`;
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    function addMessage(text, type, showActions) {
+        const c = document.getElementById('messages');
+        const d = document.createElement('div');
+        d.className = `message ${type}`;
+        const avatar = type === 'user' ? '👤' : '🦅';
+        const name = type === 'user' ? 'YOU' : 'AGENT';
+
+        const actionsHTML = (type === 'ai' && showActions) ? `
+            <div class="message-actions">
+                <button class="msg-action-btn" onclick="copyText(this)">📋 Copy</button>
+                <button class="msg-action-btn" onclick="saveThisOutput(this)">💾 Save</button>
+                <button class="msg-action-btn" onclick="downloadText(this)">⬇ Export</button>
+            </div>` : '';
+
+        const headerHTML = type === 'user'
+            ? `<span>${name}</span><span class="message-avatar">${avatar}</span>`
+            : `<span class="message-avatar">${avatar}</span><span>${name}</span>`;
+
+        d.innerHTML = `
+            <div class="message-header">${headerHTML}</div>
+            <div class="message-bubble" data-raw="${encodeURIComponent(text)}">${formatMessage(text)}</div>
+            ${actionsHTML}
+        `;
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+        return d;
+    }
+
+    // Streaming message
+    function addStreamingMessage() {
+        const c = document.getElementById('messages');
+        const d = document.createElement('div');
+        d.className = 'message ai';
+        d.innerHTML = `
+            <div class="message-header"><span class="message-avatar">🦅</span><span>AGENT</span></div>
+            <div class="message-bubble" id="streamBubble"><span class="streaming-cursor"></span></div>
+        `;
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+        return d;
+    }
+
+    function typeText(element, text, speed, onDone) {
+        const bubble = element.querySelector('.message-bubble');
+        bubble.innerHTML = '';
+        const formatted = formatMessage(text);
+        // For HTML we just set it directly with a fade
+        bubble.style.opacity = '0';
+        bubble.innerHTML = formatted + '<span class="streaming-cursor"></span>';
+        setTimeout(() => {
+            bubble.style.transition = 'opacity 0.5s';
+            bubble.style.opacity = '1';
+            setTimeout(() => {
+                bubble.querySelector('.streaming-cursor')?.remove();
+                if (onDone) onDone();
+            }, 600);
+        }, 100);
+    }
+
+    function formatMessage(text) {
+        return text
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+            .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+            .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
+            .replace(/```[\w]*\n?([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/^- (.*?)$/gm, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+            .replace(/---/g, '<hr>')
+            .replace(/\n/g, '<br>');
+    }
+
+    // ===== PROGRESS STAGES =====
+    function showProgress() {
+        document.getElementById('progressStages').classList.add('active');
+        document.getElementById('agentStatusBar').classList.add('active');
+        const stages = ['stage1','stage2','stage3','stage4'];
+        const labels = ['Analyzing...', 'Researching...', 'Building...', 'Finalizing...'];
+        let i = 0;
+        stages.forEach(s => document.getElementById(s).className = 'stage');
+        const interval = setInterval(() => {
+            if (i > 0) document.getElementById(stages[i-1]).className = 'stage done';
+            if (i < stages.length) {
+                document.getElementById(stages[i]).className = 'stage active';
+                document.getElementById('agentStatusText').textContent = labels[i];
+                i++;
+            } else {
+                clearInterval(interval);
             }
-            
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+        }, 700);
+        return interval;
+    }
+
+    function hideProgress() {
+        document.getElementById('progressStages').classList.remove('active');
+        document.getElementById('agentStatusBar').classList.remove('active');
+        ['stage1','stage2','stage3','stage4'].forEach(s => {
+            document.getElementById(s).className = 'stage done';
+        });
+        setTimeout(() => {
+            document.getElementById('progressStages').classList.remove('active');
+        }, 1000);
+    }
+
+    // ===== TIMELINE =====
+    function addTimelineItem(text, type) {
+        const items = document.getElementById('timelineItems');
+        const d = document.createElement('div');
+        d.className = `timeline-item ${type || ''}`;
+        d.textContent = `${new Date().toLocaleTimeString()} — ${text}`;
+        items.appendChild(d);
+        items.parentElement.scrollTop = items.parentElement.scrollHeight;
+    }
+
+    // ===== SEND =====
+    async function send() {
+        const input = document.getElementById('input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user', false);
+        input.value = '';
+
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+
+        const progressInterval = showProgress();
+        addTimelineItem(`User: "${text.substring(0,40)}..."`, '');
+
+        // Build context with business profile
+        let context = `Current agent: ${currentAgent}`;
+        if (businessProfile) {
+            context += `\n\nBUSINESS PROFILE:
+- Business Name: ${businessProfile.bizName || 'N/A'}
+- Industry: ${businessProfile.bizType || 'N/A'}
+- Location: ${businessProfile.bizLocation || 'N/A'}
+- Target Customers: ${businessProfile.bizCustomers || 'N/A'}
+- Current Goal: ${businessProfile.bizGoal || 'N/A'}
+IMPORTANT: Tailor ALL advice specifically to this business.`;
         }
 
-        function formatMessage(text) {
-            // Convert markdown-style code blocks
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                .replace(/\n/g, '<br>');
-        }
+        // Add streaming message placeholder
+        const streamMsg = addStreamingMessage();
 
-        function quickPrompt(text) {
-            document.getElementById('input').value = text;
-            document.getElementById('input').focus();
-        }
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, sessionToken: session.token, context })
+            });
 
-        async function send() {
-            const input = document.getElementById('input');
-            const text = input.value.trim();
-            if (!text) return;
+            const data = await res.json();
+            clearInterval(progressInterval);
+            hideProgress();
+            sendBtn.disabled = false;
 
-            addMessage(text, 'user');
-            input.value = '';
-            
-            const typing = document.getElementById('typing');
-            const sendBtn = document.getElementById('sendBtn');
-            typing.classList.add('active');
-            sendBtn.disabled = true;
+            if (data.error) {
+                streamMsg.remove();
+                addMessage(`⚠️ ${data.error}`, 'ai', false);
+                addTimelineItem('Error: ' + data.error, 'error');
+            } else {
+                lastAIResponse = data.result || data.rawResponse || '';
 
-            try {
-                const res = await fetch(`${API_URL}/api/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: text, 
-                        sessionToken: session.token,
-                        context: `Current agent: ${currentAgent}`
-                    })
+                // Type out response
+                typeText(streamMsg, lastAIResponse, 10, () => {
+                    // Add action buttons
+                    const actDiv = document.createElement('div');
+                    actDiv.className = 'message-actions';
+                    actDiv.innerHTML = `
+                        <button class="msg-action-btn" onclick="copyLastResponse()">📋 Copy</button>
+                        <button class="msg-action-btn" onclick="saveOutput()">💾 Save</button>
+                        <button class="msg-action-btn" onclick="downloadLastResponse()">⬇ Export</button>
+                    `;
+                    streamMsg.appendChild(actDiv);
                 });
 
-                const data = await res.json();
-                typing.classList.remove('active');
-                sendBtn.disabled = false;
+                addTimelineItem(`${data.agent || 'Agent'} responded (${data.usage?.total_tokens || '?'} tokens)`, 'success');
 
-                if (data.error) {
-                    addMessage(`⚠️ ERROR: ${data.error}`, 'ai');
-                } else {
-                    addMessage(data.result, 'ai');
+                // Check for HTML/frontend content — render in preview
+                const raw = data.rawResponse || '';
+                const htmlMatch = raw.match(/```(?:html|HTML)([\s\S]*?)```/) || raw.match(/<(!DOCTYPE|html)/i);
+                const hasHTML = htmlMatch || (currentAgent === 'frontend_engineer' && (raw.includes('<div') || raw.includes('<html')));
+
+                if (hasHTML) {
+                    let htmlContent = htmlMatch ? (htmlMatch[1] || raw) : raw;
+                    if (!htmlContent.includes('<!DOCTYPE') && !htmlContent.includes('<html')) {
+                        htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:20px;}</style></head><body>${htmlContent}</body></html>`;
+                    }
+                    renderPreview(htmlContent, raw);
+                    addTimelineItem('Frontend rendered in preview panel', 'success');
                 }
-            } catch (err) {
-                typing.classList.remove('active');
-                sendBtn.disabled = false;
-                addMessage(`⚠️ CONNECTION FAILED: ${err.message}. Ensure backend is running on port 3001.`, 'ai');
             }
+        } catch (err) {
+            clearInterval(progressInterval);
+            hideProgress();
+            sendBtn.disabled = false;
+            streamMsg.remove();
+            addMessage(`⚠️ Connection failed: ${err.message}`, 'ai', false);
+            addTimelineItem('Connection error', 'error');
         }
+    }
 
-        function logout() {
-            localStorage.removeItem('userSession');
-            window.location.href = 'login.html';
+    // ===== PREVIEW =====
+    function renderPreview(html, code) {
+        document.getElementById('previewEmpty').style.display = 'none';
+
+        // Visual tab
+        const iframe = document.getElementById('visualView');
+        iframe.srcdoc = html;
+        iframe.classList.add('active');
+
+        // Code tab
+        document.getElementById('codeView').textContent = code || html;
+
+        // Default to visual
+        switchTab('visual');
+        if (!previewVisible) togglePreview();
+    }
+
+    function switchTab(tab) {
+        currentTab = tab;
+        const codeView = document.getElementById('codeView');
+        const visualView = document.getElementById('visualView');
+        document.getElementById('tabVisual').className = 'preview-tab' + (tab==='visual' ? ' active' : '');
+        document.getElementById('tabCode').className = 'preview-tab' + (tab==='code' ? ' active' : '');
+
+        if (tab === 'visual') {
+            codeView.style.display = 'none';
+            visualView.classList.add('active');
+        } else {
+            codeView.style.display = 'block';
+            visualView.classList.remove('active');
         }
+    }
 
-        document.getElementById('input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') send();
-        });
+    function togglePreview() {
+        previewVisible = !previewVisible;
+        document.getElementById('previewPanel').classList.toggle('hidden', !previewVisible);
+    }
 
-        // Focus input on load
+    // ===== SAVE / EXPORT =====
+    function saveOutput() {
+        if (!lastAIResponse) return;
+        const name = prompt('Name this output:', `Output ${savedOutputs.length + 1}`);
+        if (!name) return;
+        savedOutputs.push({ name, content: lastAIResponse, date: new Date().toISOString() });
+        localStorage.setItem('savedOutputs', JSON.stringify(savedOutputs));
+        renderSavedList();
+        addTimelineItem(`Saved: "${name}"`, 'success');
+    }
+
+    function renderSavedList() {
+        const list = document.getElementById('savedList');
+        if (savedOutputs.length === 0) {
+            list.innerHTML = '<div style="font-size:11px;color:#444;padding:4px 0;">No saved outputs yet</div>';
+            return;
+        }
+        list.innerHTML = savedOutputs.slice(-5).reverse().map((o, i) =>
+            `<div class="saved-item" onclick="loadSaved(${savedOutputs.length-1-i})">📄 ${o.name}</div>`
+        ).join('');
+    }
+
+    function loadSaved(i) {
+        const output = savedOutputs[i];
+        if (!output) return;
+        addMessage(`📄 Loaded: **${output.name}**\n\n${output.content}`, 'ai', true);
+    }
+
+    function copyLastResponse() {
+        navigator.clipboard.writeText(lastAIResponse).then(() => addTimelineItem('Copied to clipboard', 'success'));
+    }
+
+    function downloadLastResponse() {
+        const blob = new Blob([lastAIResponse], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `openclaw-output-${Date.now()}.txt`;
+        a.click();
+        addTimelineItem('Downloaded output', 'success');
+    }
+
+    function copyPreview() {
+        const code = document.getElementById('codeView').textContent;
+        navigator.clipboard.writeText(code || lastAIResponse).then(() => addTimelineItem('Copied to clipboard', 'success'));
+    }
+
+    function downloadPreview() {
+        const html = document.getElementById('visualView').srcdoc;
+        const blob = new Blob([html || lastAIResponse], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `openclaw-build-${Date.now()}.html`;
+        a.click();
+        addTimelineItem('Exported HTML file', 'success');
+    }
+
+    // ===== BUSINESS PROFILE =====
+    function openProfileModal() {
+        if (businessProfile) {
+            document.getElementById('bizName').value = businessProfile.bizName || '';
+            document.getElementById('bizType').value = businessProfile.bizType || '';
+            document.getElementById('bizLocation').value = businessProfile.bizLocation || '';
+            document.getElementById('bizCustomers').value = businessProfile.bizCustomers || '';
+            document.getElementById('bizGoal').value = businessProfile.bizGoal || '';
+        }
+        document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function saveProfile() {
+        businessProfile = {
+            bizName: document.getElementById('bizName').value,
+            bizType: document.getElementById('bizType').value,
+            bizLocation: document.getElementById('bizLocation').value,
+            bizCustomers: document.getElementById('bizCustomers').value,
+            bizGoal: document.getElementById('bizGoal').value,
+        };
+        localStorage.setItem('businessProfile', JSON.stringify(businessProfile));
+        document.getElementById('profileName').textContent = businessProfile.bizName || 'Profile saved ✓';
+        closeProfileModal();
+        addSystemMsg(`Business profile saved — all agents now know your business!`);
+        addTimelineItem('Business profile updated', 'success');
+    }
+
+    // ===== HELPERS =====
+    function quickPrompt(text) {
+        document.getElementById('input').value = text;
         document.getElementById('input').focus();
-    </script>
+    }
+
+    function clearChat() {
+        const c = document.getElementById('messages');
+        c.innerHTML = `<div class="welcome-message">
+            <div class="welcome-claw">🦅</div>
+            <div class="welcome-title">OPEN CLAW v4.0</div>
+            <div class="welcome-text">Chat cleared. Ready for new commands.</div>
+        </div>`;
+        document.getElementById('timelineItems').innerHTML = '<div class="timeline-item">Chat cleared</div>';
+        lastAIResponse = '';
+    }
+
+    function logout() {
+        localStorage.removeItem('userSession');
+        window.location.href = '/';
+    }
+
+    document.getElementById('input').addEventListener('keypress', e => {
+        if (e.key === 'Enter') send();
+    });
+
+    document.getElementById('input').focus();
+</script>
 </body>
 </html>
