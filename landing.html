@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Claw — AI Agents for Small Business</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #dc2626;
+            --teal: #0d9488;
+            --black: #050505;
+            --white: #f5f5f0;
+            --gray: #1a1a1a;
+            --mid: #2a2a2a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5,5,5,0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            color: var(--red);
+            letter-spacing: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--white); }
+
+        .nav-cta {
+            padding: 12px 28px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 60px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -200px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(13,148,136,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 700px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid rgba(220,38,38,0.4);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--red);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .hero-badge span {
+            width: 6px;
+            height: 6px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(60px, 8vw, 110px);
+            line-height: 0.95;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        h1 .accent { color: var(--red); }
+        h1 .accent-teal { color: var(--teal); }
+
+        .hero-sub {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #aaa;
+            max-width: 520px;
+            margin-bottom: 50px;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .btn-primary {
+            padding: 18px 40px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(220,38,38,0.3);
+        }
+
+        .btn-secondary {
+            padding: 18px 40px;
+            background: transparent;
+            color: var(--white);
+            border: 1px solid #333;
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 50px;
+            margin-top: 80px;
+            padding-top: 50px;
+            border-top: 1px solid #1a1a1a;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--red);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .hero-visual {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45%;
+            max-width: 600px;
+            animation: fadeInRight 1s ease 0.3s both;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .agent-card {
+            background: rgba(26,26,26,0.8);
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--red), var(--teal));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .agent-card:hover {
+            border-color: #3a3a3a;
+            transform: translateY(-3px);
+        }
+
+        .agent-card:hover::before { opacity: 1; }
+
+        .agent-emoji { font-size: 28px; margin-bottom: 10px; display: block; }
+
+        .agent-name {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ccc;
+        }
+
+        /* PROBLEM SECTION */
+        .problem {
+            padding: 120px 60px;
+            background: var(--gray);
+            position: relative;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(40px, 5vw, 70px);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-top: 60px;
+        }
+
+        .pain-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pain-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border-left: 3px solid var(--red);
+        }
+
+        .pain-icon { font-size: 24px; flex-shrink: 0; }
+
+        .pain-text h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .pain-text p {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .solution-box {
+            background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(13,148,136,0.1));
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .solution-icon { font-size: 80px; margin-bottom: 20px; display: block; }
+
+        .solution-box h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .solution-box p {
+            color: #888;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* AGENTS SECTION */
+        .agents {
+            padding: 120px 60px;
+            background: var(--black);
+        }
+
+        .agents-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 80px;
+        }
+
+        .agents-full-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .agent-full-card {
+            background: var(--gray);
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .agent-full-card:hover {
+            background: var(--mid);
+            border-color: var(--red);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .agent-full-emoji { font-size: 36px; margin-bottom: 15px; display: block; }
+
+        .agent-full-name {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .agent-full-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* HOW IT WORKS */
+        .how {
+            padding: 120px 60px;
+            background: var(--gray);
+        }
+
+        .how-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 80px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            position: relative;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--red), var(--teal));
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            width: 80px;
+            height: 80px;
+            background: var(--black);
+            border: 2px solid var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: var(--red);
+            margin: 0 auto 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .step p {
+            font-size: 15px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* PRICING */
+        .pricing {
+            padding: 120px 60px;
+            background: var(--black);
+            text-align: center;
+        }
+
+        .pricing-header {
+            max-width: 600px;
+            margin: 0 auto 80px;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--gray);
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 50px 40px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--red);
+            background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(13,148,136,0.05));
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--red);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .plan-name {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .plan-price {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 70px;
+            line-height: 1;
+            color: var(--white);
+            margin-bottom: 5px;
+        }
+
+        .plan-price span {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .plan-period {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .plan-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: #ccc;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--teal);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* WAITLIST */
+        .waitlist {
+            padding: 120px 60px;
+            background: var(--gray);
+            text-align: center;
+        }
+
+        .waitlist-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .waitlist-box h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(50px, 6vw, 80px);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .waitlist-box p {
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .waitlist-form {
+            display: flex;
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto 20px;
+        }
+
+        .waitlist-input {
+            flex: 1;
+            padding: 18px 24px;
+            background: var(--black);
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .waitlist-input:focus { border-color: var(--red); }
+        .waitlist-input::placeholder { color: #555; }
+
+        .waitlist-note {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .success-msg {
+            display: none;
+            padding: 20px;
+            background: rgba(13,148,136,0.1);
+            border: 1px solid var(--teal);
+            border-radius: 8px;
+            color: var(--teal);
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 60px;
+            background: var(--black);
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--red);
+            letter-spacing: 3px;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            font-size: 13px;
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover { color: var(--white); }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px) translateY(-50%); }
+            to { opacity: 1; transform: translateX(0) translateY(-50%); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .hero-visual { display: none; }
+            .hero-content { max-width: 100%; }
+            .agents-full-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px 24px; }
+            .nav-links { display: none; }
+            .hero { padding: 120px 24px 80px; }
+            .hero-stats { gap: 30px; flex-wrap: wrap; }
+            .problem { padding: 80px 24px; }
+            .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+            .agents { padding: 80px 24px; }
+            .agents-full-grid { grid-template-columns: repeat(2, 1fr); }
+            .how { padding: 80px 24px; }
+            .steps { grid-template-columns: 1fr; }
+            .steps::before { display: none; }
+            .pricing { padding: 80px 24px; }
+            .pricing-cards { grid-template-columns: 1fr; }
+            .waitlist { padding: 80px 24px; }
+            .waitlist-form { flex-direction: column; }
+            footer { padding: 40px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">🦅 OPEN CLAW</div>
+    <ul class="nav-links">
+        <li><a href="#agents">Agents</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <a href="#waitlist" class="nav-cta">Get Early Access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span></span> Now in Beta — Free Access
+        </div>
+        <h1>
+            10 AI AGENTS<br>
+            <span class="accent">WORKING FOR</span><br>
+            <span class="accent-teal">YOUR BUSINESS</span>
+        </h1>
+        <p class="hero-sub">
+            Open Claw gives small business owners a full AI team — from market research to email campaigns — available 24/7, at a fraction of the cost of hiring.
+        </p>
+        <div class="hero-actions">
+            <a href="#waitlist" class="btn-primary">Start Free Today</a>
+            <a href="#agents" class="btn-secondary">See All Agents →</a>
+        </div>
+        <div class="hero-stats">
+            <div>
+                <div class="stat-num">10</div>
+                <div class="stat-label">AI Specialists</div>
+            </div>
+            <div>
+                <div class="stat-num">40+</div>
+                <div class="stat-label">Business Tools</div>
+            </div>
+            <div>
+                <div class="stat-num">24/7</div>
+                <div class="stat-label">Always Working</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <div class="agent-grid">
+            <div class="agent-card"><span class="agent-emoji">🎯</span><div class="agent-name">Orchestrator</div></div>
+            <div class="agent-card"><span class="agent-emoji">🔍</span><div class="agent-name">Research</div></div>
+            <div class="agent-card"><span class="agent-emoji">🎨</span><div class="agent-name">Design</div></div>
+            <div class="agent-card"><span class="agent-emoji">⚙️</span><div class="agent-name">Backend</div></div>
+            <div class="agent-card"><span class="agent-emoji">🎭</span><div class="agent-name">Frontend</div></div>
+            <div class="agent-card"><span class="agent-emoji">📧</span><div class="agent-name">Email</div></div>
+            <div class="agent-card"><span class="agent-emoji">💰</span><div class="agent-name">Sales</div></div>
+            <div class="agent-card"><span class="agent-emoji">🔒</span><div class="agent-name">Security</div></div>
+            <div class="agent-card"><span class="agent-emoji">📊</span><div class="agent-name">Analytics</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+    <div class="section-label">The Problem</div>
+    <h2 class="section-title">SMALL BUSINESSES<br>CAN'T AFFORD A<br><span style="color:var(--red)">FULL TEAM</span></h2>
+    <div class="problem-grid">
+        <ul class="pain-list">
+            <li class="pain-item">
+                <span class="pain-icon">💸</span>
+                <div class="pain-text">
+                    <h4>Hiring is too expensive</h4>
+                    <p>A marketing manager, developer, and data analyst can cost $200K+ per year. That's out of reach for most small businesses.</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-icon">⏰</span>
+                <div class="pain-text">
+                    <h4>You're doing everything yourself</h4>
+                    <p>Writing emails, researching competitors, building landing pages — you're wearing too many hats and running out of time.</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-icon">📉</span>
+                <div class="pain-text">
+                    <h4>Falling behind competitors</h4>
+                    <p>Larger companies with big teams are moving faster. Without the right tools, it's hard to keep up.</p>
+                </div>
+            </li>
+        </ul>
+        <div class="solution-box">
+            <span class="solution-icon">🦅</span>
+            <h3>MEET YOUR AI TEAM</h3>
+            <p>Open Claw gives you 10 specialist AI agents that handle everything from market research to sales outreach — so you can focus on running your business.</p>
+        </div>
+    </div>
+</section>
+
+<!-- AGENTS -->
+<section class="agents" id="agents">
+    <div class="agents-header">
+        <div class="section-label">Your AI Team</div>
+        <h2 class="section-title">10 SPECIALISTS.<br>ONE PLATFORM.</h2>
+        <p style="color:#888; font-size:16px; margin-top:16px;">Each agent is trained for a specific role in your business. Just type what you need — they handle the rest.</p>
+    </div>
+    <div class="agents-full-grid">
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">🎯</span>
+            <div class="agent-full-name">Orchestrator</div>
+            <div class="agent-full-desc">Plans and coordinates all your business tasks</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">🔍</span>
+            <div class="agent-full-name">Market Research</div>
+            <div class="agent-full-desc">Analyzes competitors and finds opportunities</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">🎨</span>
+            <div class="agent-full-name">Product Design</div>
+            <div class="agent-full-desc">Creates wireframes and design systems</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">⚙️</span>
+            <div class="agent-full-name">Backend Engineer</div>
+            <div class="agent-full-desc">Designs databases and APIs for your products</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">🎭</span>
+            <div class="agent-full-name">Frontend Engineer</div>
+            <div class="agent-full-desc">Builds React components and web interfaces</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">📧</span>
+            <div class="agent-full-name">Communications</div>
+            <div class="agent-full-desc">Writes email sequences that convert</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">💰</span>
+            <div class="agent-full-name">Sales & Marketing</div>
+            <div class="agent-full-desc">Generates leads and cold outreach scripts</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">🔒</span>
+            <div class="agent-full-name">DevOps & Security</div>
+            <div class="agent-full-desc">Handles deployment and infrastructure</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">📊</span>
+            <div class="agent-full-name">Data Analyst</div>
+            <div class="agent-full-desc">Turns your data into business insights</div>
+        </div>
+        <div class="agent-full-card">
+            <span class="agent-full-emoji">🧪</span>
+            <div class="agent-full-name">QA & Documentation</div>
+            <div class="agent-full-desc">Tests products and writes clear docs</div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+    <div class="how-header">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">UP AND RUNNING<br>IN MINUTES</h2>
+    </div>
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <h3>Sign Up Free</h3>
+            <p>Create your account in seconds. No credit card required. Get instant access to all 10 AI agents.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <h3>Pick Your Agent</h3>
+            <p>Choose from 10 specialist agents based on what your business needs right now.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <h3>Get Results</h3>
+            <p>Type your request in plain English. Your AI agent delivers professional results in seconds.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+    <div class="pricing-header">
+        <div class="section-label">Pricing</div>
+        <h2 class="section-title">START FREE.<br>SCALE WHEN READY.</h2>
+        <p style="color:#888; font-size:16px; margin-top:16px;">We're in beta — join free today and lock in early pricing forever.</p>
+    </div>
+    <div class="pricing-cards">
+        <div class="pricing-card">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price">$0<span>/mo</span></div>
+            <div class="plan-period">Free during beta</div>
+            <ul class="plan-features">
+                <li>All 10 AI agents</li>
+                <li>50 requests/month</li>
+                <li>Email support</li>
+                <li>Basic analytics</li>
+            </ul>
+            <a href="#waitlist" class="btn-primary" style="width:100%; text-align:center;">Get Started Free</a>
+        </div>
+        <div class="pricing-card featured">
+            <div class="featured-badge">Most Popular</div>
+            <div class="plan-name">Professional</div>
+            <div class="plan-price">$29<span>/mo</span></div>
+            <div class="plan-period">Coming soon — lock in now</div>
+            <ul class="plan-features">
+                <li>All 10 AI agents</li>
+                <li>Unlimited requests</li>
+                <li>Priority support</li>
+                <li>Advanced analytics</li>
+                <li>Custom workflows</li>
+            </ul>
+            <a href="#waitlist" class="btn-primary" style="width:100%; text-align:center;">Lock In Early Price</a>
+        </div>
+        <div class="pricing-card">
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-price">$99<span>/mo</span></div>
+            <div class="plan-period">Coming soon</div>
+            <ul class="plan-features">
+                <li>Everything in Pro</li>
+                <li>Team accounts (5 seats)</li>
+                <li>API access</li>
+                <li>White-label option</li>
+                <li>Dedicated support</li>
+            </ul>
+            <a href="#waitlist" class="btn-secondary" style="width:100%; text-align:center;">Join Waitlist</a>
+        </div>
+    </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist" id="waitlist">
+    <div class="waitlist-box">
+        <div class="section-label">Early Access</div>
+        <h2>JOIN THE<br><span style="color:var(--red)">WAITLIST</span></h2>
+        <p>Be first in line when we launch. Early members get free access and locked-in pricing forever.</p>
+        <div class="waitlist-form">
+            <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="your@email.com">
+            <button class="btn-primary" onclick="joinWaitlist()">Join Free</button>
+        </div>
+        <div class="waitlist-note">🔒 No spam. No credit card. Unsubscribe anytime.</div>
+        <div class="success-msg" id="successMsg">
+            🎉 You're on the list! We'll be in touch soon.
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-logo">🦅 OPEN CLAW</div>
+    <div class="footer-copy">© 2025 Open Claw Enterprise. All rights reserved.</div>
+    <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="https://openclaw-enterprise-production-57a3.up.railway.app">Launch App →</a>
+    </div>
+</footer>
+
+<script>
+    // Waitlist form
+    function joinWaitlist() {
+        const email = document.getElementById('waitlistEmail').value;
+        if (!email || !email.includes('@')) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        // Store email locally for now
+        const emails = JSON.parse(localStorage.getItem('waitlist') || '[]');
+        emails.push({ email, date: new Date().toISOString() });
+        localStorage.setItem('waitlist', JSON.stringify(emails));
+
+        document.getElementById('waitlistEmail').value = '';
+        document.getElementById('successMsg').style.display = 'block';
+        console.log('Waitlist emails:', emails);
+    }
+
+    // Enter key on input
+    document.getElementById('waitlistEmail').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') joinWaitlist();
+    });
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.agent-full-card, .pain-item, .step, .pricing-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>
