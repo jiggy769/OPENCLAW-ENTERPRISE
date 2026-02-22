@@ -141,6 +141,39 @@
         .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(220,38,38,0.4); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+        .btn-secondary {
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+            font-size: 14px;
+            padding: 12px;
+        }
+
+        .btn-secondary:hover { box-shadow: 0 10px 30px rgba(13,148,136,0.4); }
+
+        .email-status-box {
+            background: linear-gradient(135deg, rgba(13,148,136,0.1), rgba(13,148,136,0.05));
+            border: 2px solid #0d9488;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .email-status-box.sent { border-color: #0d9488; }
+        .email-status-box.fallback { border-color: #dc2626; background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(220,38,38,0.05)); }
+
+        .email-icon { font-size: 40px; margin-bottom: 15px; }
+        .email-status-box.sent .email-icon { color: #0d9488; }
+        .email-status-box.fallback .email-icon { color: #dc2626; }
+
+        .email-message { font-size: 16px; color: #cccccc; margin-bottom: 10px; }
+        .email-address { color: #0d9488; font-weight: 700; font-size: 14px; word-break: break-all; }
+
         .code-display-box {
             background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(13,148,136,0.1));
             border: 2px solid #dc2626;
@@ -148,6 +181,7 @@
             padding: 25px;
             margin: 20px 0;
             display: none;
+            animation: glow 2s ease-in-out infinite alternate;
         }
 
         .code-label {
@@ -172,6 +206,24 @@
             to { text-shadow: 0 0 40px rgba(220,38,38,1), 0 0 80px rgba(13,148,136,0.3); }
         }
 
+        .resend-box {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .resend-link {
+            color: #0d9488;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 5px;
+        }
+
+        .resend-link:hover { color: #14b8a6; }
+        .resend-link.disabled { color: #444; cursor: not-allowed; text-decoration: none; }
+
+        .countdown { color: #dc2626; font-weight: 700; }
+
         .status {
             margin: 12px 0;
             padding: 12px;
@@ -182,6 +234,7 @@
         }
         .status.error { background: rgba(220,38,38,0.15); color: #ff6b6b; border: 1px solid rgba(220,38,38,0.3); }
         .status.success { background: rgba(13,148,136,0.15); color: #14b8a6; border: 1px solid rgba(13,148,136,0.3); }
+        .status.info { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
 
         .hidden { display: none !important; }
 
@@ -193,6 +246,22 @@
             letter-spacing: 4px;
         }
         .powered-by span { color: #0d9488; }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -208,16 +277,30 @@
             <button class="btn" id="sendBtn" onclick="sendCode()">INITIALIZE ACCESS</button>
         </div>
 
+        <!-- Email Status Box -->
+        <div id="emailStatusBox" class="email-status-box">
+            <div class="email-icon" id="emailIcon">📧</div>
+            <div class="email-message" id="emailMessage"></div>
+            <div class="email-address" id="emailDisplay"></div>
+        </div>
+
         <!-- Code display (fallback) -->
         <div id="codeDisplayBox" class="code-display-box">
             <div class="code-label">YOUR VERIFICATION CODE</div>
             <div class="code-number" id="codeNumber"></div>
+            <div style="color: #666; font-size: 12px; margin-top: 10px;">Use this code to login</div>
         </div>
 
         <!-- Step 2: Code -->
         <div id="step2" class="hidden">
             <input type="text" id="codeInput" placeholder="ENTER 6-DIGIT CODE" maxlength="6">
             <button class="btn" id="verifyBtn" onclick="verifyCode()">AUTHENTICATE</button>
+            
+            <div class="resend-box">
+                Didn't receive it?
+                <span class="resend-link" id="resendLink" onclick="resendCode()">Resend code</span>
+                <span id="countdown" class="countdown hidden"></span>
+            </div>
         </div>
 
         <div id="status" class="status"></div>
@@ -226,8 +309,14 @@
     </div>
 
     <script>
-        const API_URL = 'https://openclaw-enterprise-production-57a3.up.railway.app';
+        // Use relative URL for same-origin, or your production URL
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001' 
+            : 'https://openclaw-enterprise-production-57a3.up.railway.app';
+        
         let userEmail = '';
+        let resendCooldown = 60;
+        let countdownInterval = null;
 
         function showStatus(msg, type) {
             const el = document.getElementById('status');
@@ -237,7 +326,31 @@
             if (type !== 'success') setTimeout(() => el.style.display = 'none', 5000);
         }
 
-        async function sendCode() {
+        function startResendCooldown() {
+            const resendLink = document.getElementById('resendLink');
+            const countdown = document.getElementById('countdown');
+            
+            resendLink.classList.add('disabled');
+            resendLink.onclick = null;
+            countdown.classList.remove('hidden');
+            
+            let timeLeft = resendCooldown;
+            countdown.textContent = `(${timeLeft}s)`;
+            
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdown.textContent = `(${timeLeft}s)`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    resendLink.classList.remove('disabled');
+                    resendLink.onclick = resendCode;
+                    countdown.classList.add('hidden');
+                }
+            }, 1000);
+        }
+
+        async function sendCode(isResend = false) {
             userEmail = document.getElementById('emailInput').value.trim();
 
             if (!userEmail || !userEmail.includes('@')) {
@@ -246,9 +359,14 @@
             }
 
             const btn = document.getElementById('sendBtn');
+            const originalText = btn.textContent;
+            
             btn.disabled = true;
-            btn.textContent = 'SENDING...';
-            showStatus('Sending verification code...', '');
+            btn.innerHTML = '<span class="loading-spinner"></span>SENDING...';
+            
+            if (!isResend) {
+                showStatus('Sending verification code...', 'info');
+            }
 
             try {
                 const res = await fetch(`${API_URL}/api/send-code`, {
@@ -260,26 +378,64 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    // Show fallback code if email fails
-                    if (data.fallback && data.code) {
+                    // Show email status box
+                    const emailStatusBox = document.getElementById('emailStatusBox');
+                    const emailIcon = document.getElementById('emailIcon');
+                    const emailMessage = document.getElementById('emailMessage');
+                    const emailDisplay = document.getElementById('emailDisplay');
+                    
+                    emailStatusBox.style.display = 'block';
+                    emailDisplay.textContent = userEmail;
+
+                    if (data.emailSent) {
+                        // Email was sent successfully
+                        emailStatusBox.className = 'email-status-box sent';
+                        emailIcon.textContent = '✅';
+                        emailMessage.textContent = isResend 
+                            ? 'New code sent to your email!' 
+                            : 'Check your email for the verification code';
+                        showStatus('✓ Code sent successfully', 'success');
+                    } else {
+                        // Fallback to on-screen display
+                        emailStatusBox.className = 'email-status-box fallback';
+                        emailIcon.textContent = '⚠️';
+                        emailMessage.textContent = 'Email delivery unavailable — use code below';
+                        
+                        // Show the code on screen
                         document.getElementById('codeNumber').textContent = data.code;
                         document.getElementById('codeDisplayBox').style.display = 'block';
-                        showStatus('Email unavailable — use code above', 'success');
-                    } else {
-                        showStatus('✓ Code sent to ' + userEmail, 'success');
+                        showStatus('Use the displayed code to login', 'success');
                     }
+
+                    // Show step 2
                     document.getElementById('step2').classList.remove('hidden');
                     document.getElementById('codeInput').focus();
+                    
+                    // Start resend cooldown
+                    startResendCooldown();
+                    
                 } else {
                     showStatus(data.error || 'Failed to send code', 'error');
                     btn.disabled = false;
-                    btn.textContent = 'INITIALIZE ACCESS';
+                    btn.textContent = originalText;
                 }
             } catch (err) {
-                showStatus('Connection failed: ' + err.message, 'error');
+                console.error('Error:', err);
+                showStatus('Connection failed. Please try again.', 'error');
                 btn.disabled = false;
-                btn.textContent = 'INITIALIZE ACCESS';
+                btn.textContent = originalText;
             }
+        }
+
+        function resendCode() {
+            if (document.getElementById('resendLink').classList.contains('disabled')) return;
+            
+            // Hide previous displays
+            document.getElementById('codeDisplayBox').style.display = 'none';
+            document.getElementById('emailStatusBox').style.display = 'none';
+            document.getElementById('codeInput').value = '';
+            
+            sendCode(true);
         }
 
         async function verifyCode() {
@@ -292,8 +448,8 @@
 
             const btn = document.getElementById('verifyBtn');
             btn.disabled = true;
-            btn.textContent = 'VERIFYING...';
-            showStatus('Authenticating...', '');
+            btn.innerHTML = '<span class="loading-spinner"></span>VERIFYING...';
+            showStatus('Authenticating...', 'info');
 
             try {
                 const res = await fetch(`${API_URL}/api/verify-code`, {
@@ -306,15 +462,15 @@
 
                 if (data.success) {
                     localStorage.setItem('userSession', JSON.stringify(data.session));
-                    showStatus('✓ Access granted! Loading...', 'success');
-                    setTimeout(() => window.location.href = '/chat', 1200);
+                    showStatus('✓ Access granted! Redirecting...', 'success');
+                    setTimeout(() => window.location.href = '/chat', 1500);
                 } else {
                     showStatus(data.error || 'Invalid code', 'error');
                     btn.disabled = false;
                     btn.textContent = 'AUTHENTICATE';
                 }
             } catch (err) {
-                showStatus('Authentication error: ' + err.message, 'error');
+                showStatus('Authentication error. Please try again.', 'error');
                 btn.disabled = false;
                 btn.textContent = 'AUTHENTICATE';
             }
@@ -328,6 +484,15 @@
                 } else {
                     sendCode();
                 }
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const session = localStorage.getItem('userSession');
+            if (session) {
+                // Optional: validate session with server
+                console.log('Existing session found');
             }
         });
     </script>
