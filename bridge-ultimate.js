@@ -69,9 +69,10 @@ app.post('/api/send-code', async (req, res) => {
         <div style="font-size:14px;color:#666;margin-top:20px;">Expires in 10 minutes</div>
       </div>`
     });
-    res.json({ success: true, message: 'Code sent to your email!' });
+    res.json({ success: true, message: 'Code sent!' });
   } catch (err) {
     console.log('Email error:', err.message);
+    // Always return code as fallback
     res.json({ success: true, code, message: 'Use this code:', display: true, fallback: true });
   }
 });
