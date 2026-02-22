@@ -1,9 +1,7 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
-import cors from 'cors';
 import path from 'path';
 import dotenv from 'dotenv';
-import { Resend } from 'resend';
 import Groq from 'groq-sdk';
 
 dotenv.config();
@@ -13,7 +11,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// CORS
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -25,7 +22,6 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(__dirname));
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const codes = new Map();
@@ -37,7 +33,7 @@ const AGENT_PROMPTS = {
   market_research: `You are a Senior Market Research Analyst with 10+ years at McKinsey/Bain. Provide deep competitive analysis with specific, current data. Research and cite real company names. Provide specific pricing data. Include market size metrics (TAM/SAM/SOM). Identify 3-5 direct competitors with strengths/weaknesses. Give actionable recommendations.`,
   product_design: `You are a Principal UX Designer at Airbnb/Stripe. Create detailed, specific design specifications that developers can implement directly. Provide exact layout specifications. Write actual copy for ALL text elements. Specify color values (hex codes) and typography. Include conversion optimization tactics.`,
   backend_engineer: `You are a Staff Backend Engineer at Netflix/Google. Provide production-ready architecture with complete, runnable code. Write complete SQL schemas. Define all API endpoints. Include authentication flows. Design caching strategies. Write error handling with specific HTTP status codes.`,
-  frontend_engineer: `You are a Senior Frontend Architect at Vercel/Shopify. Generate complete, production-ready React/Next.js code. Write complete React components with TypeScript. Use modern hooks. Style with Tailwind CSS. Define all TypeScript interfaces. Ensure accessibility.`,
+  frontend_engineer: `You are a Senior Frontend Architect at Vercel/Shopify. Generate complete, production-ready HTML/CSS/JavaScript code. Write complete working pages that can be rendered directly in a browser. Make them visually stunning with modern design.`,
   communications: `You are a Communications Director at HubSpot/Salesforce. Write high-converting email sequences with actual copy, not templates. Write complete email subject lines. Write full email body copy with opening hooks, value propositions, and CTAs. Include personalization tokens.`,
   sales_marketing: `You are a Growth VP at Dropbox/Slack. Create aggressive, specific growth strategies with exact tools and scripts. Name specific tools with pricing. Write complete cold outreach scripts. Create landing page copy with conversion psychology. Design pricing strategies.`,
   devops_security: `You are a DevSecOps Lead at AWS/HashiCorp. Provide enterprise-grade, copy-pasteable infrastructure code. Write complete CI/CD pipeline configs. Create Dockerfiles with multi-stage builds. Write Kubernetes manifests. Include security scanning configs.`,
@@ -45,8 +41,8 @@ const AGENT_PROMPTS = {
   qa_documentation: `You are a QA Director + Technical Writer at Microsoft/Atlassian. Create comprehensive test suites and documentation. Write complete test plans. Generate unit/integration/E2E test code. Write complete API documentation. Create incident response runbooks.`
 };
 
-// SEND CODE - ANY EMAIL
-app.post('/api/send-code', async (req, res) => {
+// SEND CODE - SHOWS ON SCREEN, NO EMAIL REQUIRED
+app.post('/api/send-code', (req, res) => {
   const { email } = req.body;
 
   if (!email || !email.includes('@')) {
@@ -58,26 +54,16 @@ app.post('/api/send-code', async (req, res) => {
 
   console.log(`CODE for ${email}: ${code}`);
 
-  try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: [email],
-      subject: 'Your Open Claw Code: ' + code,
-      html: `<div style="background:#0a0a0a;color:#dc2626;padding:40px;text-align:center;border:3px solid #dc2626;font-family:Arial;border-radius:10px;">
-        <div style="font-size:16px;color:#666;margin-bottom:20px;">🦅 OPEN CLAW ENTERPRISE</div>
-        <div style="font-size:60px;font-weight:bold;letter-spacing:10px;">${code}</div>
-        <div style="font-size:14px;color:#666;margin-top:20px;">Expires in 10 minutes</div>
-      </div>`
-    });
-    res.json({ success: true, message: 'Code sent!' });
-  } catch (err) {
-    console.log('Email error:', err.message);
-    // Always return code as fallback
-    res.json({ success: true, code, message: 'Use this code:', display: true, fallback: true });
-  }
+  return res.json({
+    success: true,
+    code: code,
+    display: true,
+    fallback: true,
+    message: 'Your verification code:'
+  });
 });
 
-// VERIFY CODE - ANY EMAIL
+// VERIFY CODE
 app.post('/api/verify-code', (req, res) => {
   const { email, code } = req.body;
 
@@ -88,11 +74,15 @@ app.post('/api/verify-code', (req, res) => {
   const stored = codes.get(email);
 
   if (!stored) return res.status(400).json({ error: 'No code found. Request a new code.' });
+
   if (Date.now() - stored.time > 600000) {
     codes.delete(email);
     return res.status(400).json({ error: 'Code expired. Request a new code.' });
   }
-  if (stored.code !== code) return res.status(400).json({ error: 'Invalid code. Try again.' });
+
+  if (stored.code !== code) {
+    return res.status(400).json({ error: 'Invalid code. Please try again.' });
+  }
 
   codes.delete(email);
   const token = 'tok_' + Math.random().toString(36).substr(2, 16);
@@ -100,10 +90,10 @@ app.post('/api/verify-code', (req, res) => {
   chats.set(token, []);
   sessions.set(token, session);
 
-  res.json({ success: true, message: 'Welcome to Open Claw Enterprise!', session });
+  return res.json({ success: true, message: 'Welcome to Open Claw!', session });
 });
 
-// CHAT API
+// CHAT
 app.post('/api/chat', async (req, res) => {
   const { message, sessionToken, context } = req.body;
   if (!message) return res.status(400).json({ error: 'No message provided' });
@@ -119,17 +109,17 @@ app.post('/api/chat', async (req, res) => {
     agentType = 'product_design'; agentEmoji = '🎨'; agentName = 'Product Design';
   } else if (msg.includes('database') || msg.includes('api') || msg.includes('backend') || msg.includes('server') || msg.includes('schema')) {
     agentType = 'backend_engineer'; agentEmoji = '⚙️'; agentName = 'Backend Engineer';
-  } else if (msg.includes('react') || msg.includes('component') || msg.includes('frontend') || msg.includes('css') || msg.includes('html') || msg.includes('javascript')) {
+  } else if (msg.includes('react') || msg.includes('component') || msg.includes('frontend') || msg.includes('css') || msg.includes('html') || msg.includes('javascript') || msg.includes('build a') || msg.includes('create a')) {
     agentType = 'frontend_engineer'; agentEmoji = '🎭'; agentName = 'Frontend Engineer';
-  } else if (msg.includes('email') || msg.includes('notification') || msg.includes('sequence') || msg.includes('newsletter') || msg.includes('campaign')) {
+  } else if (msg.includes('email') || msg.includes('sequence') || msg.includes('newsletter') || msg.includes('campaign')) {
     agentType = 'communications'; agentEmoji = '📧'; agentName = 'Communications';
-  } else if (msg.includes('sales') || msg.includes('marketing') || msg.includes('lead') || msg.includes('growth') || msg.includes('outreach') || msg.includes('funnel')) {
+  } else if (msg.includes('sales') || msg.includes('marketing') || msg.includes('lead') || msg.includes('growth') || msg.includes('outreach')) {
     agentType = 'sales_marketing'; agentEmoji = '💰'; agentName = 'Sales & Marketing';
-  } else if (msg.includes('deploy') || msg.includes('docker') || msg.includes('security') || msg.includes('cloud') || msg.includes('kubernetes') || msg.includes('aws')) {
+  } else if (msg.includes('deploy') || msg.includes('docker') || msg.includes('security') || msg.includes('cloud') || msg.includes('aws')) {
     agentType = 'devops_security'; agentEmoji = '🔒'; agentName = 'DevOps & Security';
-  } else if (msg.includes('sql') || msg.includes('data') || msg.includes('analytics') || msg.includes('dashboard') || msg.includes('query') || msg.includes('metric')) {
+  } else if (msg.includes('sql') || msg.includes('data') || msg.includes('analytics') || msg.includes('dashboard') || msg.includes('query')) {
     agentType = 'data_analyst'; agentEmoji = '📊'; agentName = 'Data Analyst';
-  } else if (msg.includes('test') || msg.includes('documentation') || msg.includes('docs') || msg.includes('tutorial') || msg.includes('readme')) {
+  } else if (msg.includes('test') || msg.includes('documentation') || msg.includes('docs') || msg.includes('readme')) {
     agentType = 'qa_documentation'; agentEmoji = '🧪'; agentName = 'QA & Documentation';
   }
 
@@ -141,17 +131,17 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const fullPrompt = context
-      ? `PROJECT CONTEXT: ${context}\n\nTASK: ${message}`
+      ? `PROJECT CONTEXT:\n${context}\n\nTASK: ${message}`
       : conversationContext
         ? `CONVERSATION HISTORY:\n${conversationContext}\n\nCURRENT TASK: ${message}`
         : `TASK: ${message}`;
 
     const response = await groq.chat.completions.create({
       messages: [
-        { role: "system", content: AGENT_PROMPTS[agentType] },
-        { role: "user", content: `${fullPrompt}\n\nProvide a comprehensive, detailed response with specific examples and actionable next steps.` }
+        { role: 'system', content: AGENT_PROMPTS[agentType] },
+        { role: 'user', content: `${fullPrompt}\n\nProvide a comprehensive, detailed response with specific examples and actionable next steps.` }
       ],
-      model: "llama-3.3-70b-versatile",
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.7,
       max_tokens: 4096,
     });
@@ -167,7 +157,7 @@ app.post('/api/chat', async (req, res) => {
 
     const formattedResponse = `${agentEmoji} **${agentName} Agent** [${new Date().toLocaleTimeString()}]\n\n${aiResponse}\n\n---\n*Agent: ${agentType} | Model: llama-3.3-70b-versatile | Tokens: ${response.usage?.total_tokens || 'N/A'}*`;
 
-    res.json({
+    return res.json({
       success: true,
       tool: agentType,
       agent: agentName,
@@ -182,30 +172,21 @@ app.post('/api/chat', async (req, res) => {
     console.error('AI Error:', error);
     let errorMessage = 'AI service temporarily unavailable';
     if (error.status === 429) errorMessage = 'Rate limit exceeded. Please wait a moment.';
-    else if (error.status === 401) errorMessage = 'API authentication failed. Check your GROQ_API_KEY.';
-    res.status(500).json({ success: false, error: errorMessage });
+    else if (error.status === 401) errorMessage = 'API key error. Check your GROQ_API_KEY.';
+    return res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
-// HEALTH CHECK
+// HEALTH
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    version: '4.0.0',
-    agents: Object.keys(AGENT_PROMPTS).length,
-    groqConnected: !!process.env.GROQ_API_KEY,
-    resendConnected: !!process.env.RESEND_API_KEY,
-    multiUser: true
-  });
+  res.json({ status: 'healthy', version: '4.0.0', agents: 10, multiUser: true });
 });
 
-// PAGE ROUTES
+// PAGES
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/chat', (req, res) => res.sendFile(path.join(__dirname, 'chat.html')));
 app.get('/landing', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 
-// START SERVER
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`
@@ -215,10 +196,10 @@ app.listen(PORT, '0.0.0.0', () => {
 ║  Status:  ✅ LIVE on port ${PORT}                          ║
 ║  AI:      🧠 Groq llama-3.3-70b-versatile                ║
 ║  Agents:  10 Specialist Agents Ready                     ║
-║  Users:   ✅ Multi-User Enabled                          ║
+║  Login:   ✅ Code shown on screen                        ║
 ╚══════════════════════════════════════════════════════════╝
   `);
 });
 
-process.on('SIGTERM', () => { console.log('Shutting down...'); process.exit(0); });
-process.on('SIGINT', () => { console.log('Shutting down...'); process.exit(0); });
+process.on('SIGTERM', () => { process.exit(0); });
+process.on('SIGINT', () => { process.exit(0); });
